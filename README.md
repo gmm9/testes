@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# projeto-1
 
-## Getting Started
+Aplicação web em **Next.js 16** (App Router) com **React 19**, **TypeScript** e **Tailwind CSS 4**, seguindo a abordagem _Server Components first_.
 
-First, run the development server:
+> Estado atual: estrutura inicial gerada com `create-next-app`. Ainda não há funcionalidades implementadas — apenas a página inicial padrão em `app/page.tsx`.
+
+## Stack
+
+| Camada       | Tecnologia                              | Status        |
+| ------------ | --------------------------------------- | ------------- |
+| Framework    | Next.js 16.4 (App Router, Turbopack)    | ✅ instalado  |
+| UI           | React 19.3                              | ✅ instalado  |
+| Linguagem    | TypeScript 5 (`strict`)                 | ✅ instalado  |
+| Estilos      | Tailwind CSS 4 (`@tailwindcss/turbopack`) | ✅ instalado  |
+| Lint         | ESLint 9 + `eslint-config-next`         | ✅ instalado  |
+| Componentes  | shadcn/ui                               | ⏳ pendente   |
+| Formulários  | React Hook Form + Zod                   | ⏳ pendente   |
+
+## Pré-requisitos
+
+- Node.js 20.9+ (testado com Node 24)
+- npm
+
+## Primeiros passos
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Quando o projeto passar a usar variáveis de ambiente, copie `.env.example` para `.env.local` (o arquivo de exemplo ainda não existe).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Comando              | Descrição                                                        |
+| -------------------- | ---------------------------------------------------------------- |
+| `npm run dev`        | Servidor de desenvolvimento na porta 3000                        |
+| `npm run build`      | Build de produção                                                |
+| `npm run start`      | Sobe o build de produção                                         |
+| `npm run lint`       | Executa o ESLint                                                 |
+| `npm run type-check` | Gera os tipos de rota (`next typegen`) e roda `tsc --noEmit`     |
 
-To learn more about Next.js, take a look at the following resources:
+Após uma série de mudanças, rode sempre:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run type-check && npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura
 
-## Deploy on Vercel
+```
+app/              # Rotas (App Router); agrupar com (grupo)/
+  layout.tsx      # Layout raiz (fontes Geist via next/font)
+  page.tsx        # Página inicial
+  globals.css     # Tailwind 4 + tokens de tema (@theme)
+actions/          # Server Actions (mutações)
+components/       # Componentes de feature
+  ui/             # Primitivos reutilizáveis (shadcn)
+lib/              # Helpers, clients e configurações
+types/            # Tipos globais e schemas Zod compartilhados
+public/           # Arquivos estáticos
+next.config.ts    # Configuração do Next.js
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+As pastas `actions/`, `components/`, `lib/` e `types/` estão vazias por enquanto (mantidas com `.gitkeep`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Configuração relevante
+
+- **Cache Components** e **Partial Prefetching** estão habilitados em `next.config.ts` (`cacheComponents`, `partialPrefetching`).
+- **Tailwind 4** é configurado via CSS: os design tokens ficam no bloco `@theme` de `app/globals.css` — não há `tailwind.config.ts`.
+- **Alias de import**: `@/*` aponta para a raiz do projeto (ex.: `import { x } from "@/lib/x"`).
+- **Tema claro/escuro** segue `prefers-color-scheme`, via variáveis `--background` e `--foreground`.
+
+## Convenções
+
+- Server Components por padrão; `'use client'` só quando houver hooks, eventos ou APIs do browser.
+- Mutações via Server Actions em `actions/` — nunca acessar o banco a partir de Client Components.
+- Sem `any` explícito: use `unknown` + type guard.
+- Apenas Tailwind para estilos (sem CSS inline ou styled-components).
+- Arquivos em kebab-case; componentes em PascalCase.
+- Segredos apenas no servidor; `NEXT_PUBLIC_*` só para valores seguros no client.
+- Branches: `feat/`, `fix/`, `chore/` + descrição em kebab-case.
+- Commits em inglês, no imperativo (ex.: `add OAuth callback handler`).
+
+Detalhes completos em [`CLAUDE.md`](./CLAUDE.md) e [`AGENTS.md`](./AGENTS.md).
+
+## Referências
+
+- [Documentação do Next.js](https://nextjs.org/docs)
+- Docs da versão instalada: `node_modules/next/dist/docs/`
+- [Tailwind CSS v4](https://tailwindcss.com/docs)
